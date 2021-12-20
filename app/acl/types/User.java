@@ -1,7 +1,13 @@
-package controllers.acl.types;
+package acl.types;
+
+import acl.BeverlyAttrib;
 
 public class User {
+
+    @BeverlyAttrib(type="S")
     public String name;
+
+    @BeverlyAttrib(type="S")
     public String phone;
 
     public User(String name, String phone) {

@@ -3,9 +3,12 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /clients                    controllers.ClientsController.index(request: Request)
-+nocsrf
-POST    /clients                    controllers.ClientsController.save(request: Request)
+GET     /agendas                    controllers.AgendasController.list(request: Request)
+GET     /agendas/:id                controllers.AgendasController.find(id: Integer, request: Request)
+POST    /agendas                    controllers.AgendasController.save(request: Request)
+GET     /citas                      controllers.CitasController.list(request: Request)
+GET     /citas/:id                  controllers.CitasController.find(id: Integer, request: Request)
+POST    /citas                      controllers.CitasController.save(request: Request)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
