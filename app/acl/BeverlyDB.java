@@ -1,5 +1,11 @@
 package acl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.typesafe.config.Config;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
@@ -7,10 +13,29 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class DynamoDB {
+@Singleton
+public class BeverlyDB {
 
-    public static List<Map<String, AttributeValue>> getAll(DynamoDbClient ddb, String tableName) {
+    private static DynamoDbClient ddb;
+
+    @Inject
+    public BeverlyDB(Config config) {
+        System.out.println("BeverlyDB enabled!");
+        this.ddb = DynamoDbClient.builder()
+                .region(Region.US_WEST_1)
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(
+                                        System.getenv("AWS_ACCESS_KEY_ID"),
+                                        System.getenv("AWS_SECRET_ACCESS_KEY")
+                                )
+                        )
+                ).build();
+    }
+
+    public static List<Map<String, AttributeValue>> getAll(String tableName) {
         ScanRequest scanRequest = ScanRequest.builder().tableName(tableName).build();
         ScanResponse scan = ddb.scan(scanRequest);
         List<Map<String, AttributeValue>> items = null;
@@ -23,8 +48,7 @@ public class DynamoDB {
         return items;
     }
 
-    public static Optional<Map<String, AttributeValue>> getItem(DynamoDbClient ddb,
-                                                                String tableName,
+    public static Optional<Map<String, AttributeValue>> getItem(String tableName,
                                                                 String key,
                                                                 String keyVal) {
         HashMap<String,AttributeValue> keyToGet = new HashMap<>();
@@ -40,18 +64,16 @@ public class DynamoDB {
             if (!returnedItem.isEmpty()) {
                 return Optional.of(returnedItem);
             } else {
-                System.out.format("No item found with the key %s %s!\n", key, tableName);
+                System.out.format("No item found with the key %s %s!\n", tableName, key);
                 return Optional.empty();
             }
         } catch (DynamoDbException e) {
-            System.err.format("[AWS|DYNAMO] %s %s "+e.getMessage(), key, tableName);
+            System.err.format("%s %s "+e.getMessage(), tableName, key);
         }
         return Optional.empty();
     }
 
-    public static <T> T putItem(DynamoDbClient ddb,
-                                String tableName,
-                                T record) {
+    public static <T> T putItem(String tableName, T record) {
 
         HashMap<String, AttributeValue> itemValues = getAttributeValueHashMapFromRecord(record);
 
@@ -79,6 +101,10 @@ public class DynamoDB {
         return itemValues;
     }
 
+    private static <T> Collection<HashMap<String, AttributeValue>> getAttributeValueHashMapFromRecordList(Collection<T> records) {
+        return records.stream().map(BeverlyDB::getAttributeValueHashMapFromRecord).collect(Collectors.toList());
+    }
+
     private static <T> AttributeValue getAttributeValueFromRecord(T record, Field field) {
         AttributeValue attributeValue = null;
 
@@ -99,6 +125,12 @@ public class DynamoDB {
                     Map<String, AttributeValue> value2 = getAttributeValueHashMapFromRecord(invoke);
                     attributeValue = AttributeValue.builder().m(value2).build();
                     break;
+                case "L":
+                    List invoke1 = (List) method.invoke(record);
+                    Collection<HashMap<String, AttributeValue>> attributeValueHashMapFromRecordList = getAttributeValueHashMapFromRecordList(invoke1);
+                    List<AttributeValue> collect = attributeValueHashMapFromRecordList.stream().map(stringAttributeValueHashMap -> AttributeValue.builder().m(stringAttributeValueHashMap).build()).collect(Collectors.toList());
+                    attributeValue =  AttributeValue.builder().l(collect).build();
+                    break;
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
@@ -110,4 +142,46 @@ public class DynamoDB {
         return "get"+campo.substring(0, 1).toUpperCase()+campo.substring(1);
     }
 
+    public static List<Map<String, AttributeValue>> getAll(String tableName,
+                                                           String filterExpression,
+                                                           Map<String, AttributeValue> values) {
+
+        ScanRequest scanRequest = ScanRequest.builder()
+                .tableName(tableName)
+                .filterExpression(filterExpression)
+                .expressionAttributeValues(values)
+                .build();
+
+        ScanResponse scan = ddb.scan(scanRequest);
+        List<Map<String, AttributeValue>> items = null;
+        try {
+            items = scan.items();
+        } catch (Exception e) {
+            System.err.println("Unable to scan the table:");
+            System.err.println(e.getMessage());
+        }
+        return items;
+    }
+
+    public static Optional<Map<String, AttributeValue>> getFirst(String tableName,
+                                                                 String filterExpression,
+                                                                 Map<String, AttributeValue> values) {
+
+        ScanRequest scanRequest = ScanRequest.builder()
+                .tableName(tableName)
+                .filterExpression(filterExpression)
+                .expressionAttributeValues(values)
+                .limit(1)
+                .build();
+
+        ScanResponse scan = ddb.scan(scanRequest);
+        Optional<Map<String, AttributeValue>> items = null;
+        try {
+            items = scan.items().stream().findFirst();
+        } catch (Exception e) {
+            System.err.println("Unable to scan the table:");
+            System.err.println(e.getMessage());
+        }
+        return items;
+    }
 }

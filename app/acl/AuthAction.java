@@ -2,24 +2,16 @@ package acl;
 
 import acl.types.Attrs;
 import acl.types.Session;
-import com.google.inject.Inject;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 public class AuthAction extends Action.Simple {
 
-    private DynamoDbClient ddb;
     static final int ONE_DAY_IN_MILLIS = 86400000;
-
-    @Inject
-    public AuthAction(BeverlyRepo beverlyRepository) {
-        ddb = beverlyRepository.getDdb();
-    }
 
     public CompletionStage<Result> call(Http.Request req) {
         System.out.println(req);
@@ -42,8 +34,7 @@ public class AuthAction extends Action.Simple {
     }
 
     private Optional<Session> getSessionItem(Optional<String> accessToken) {
-        return DynamoDB.getItem(
-                ddb,
+        return BeverlyDB.getItem(
                 "sessions",
                 "accessToken",
                 accessToken.get()
@@ -52,7 +43,7 @@ public class AuthAction extends Action.Simple {
 
     private void updateSessionLastRefresh(Session session, long currentMillis) {
         session.setLastRefresh(currentMillis);
-        DynamoDB.putItem(ddb, "sessions", session);
+        BeverlyDB.putItem( "sessions", session);
     }
 
 }
