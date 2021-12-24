@@ -3,6 +3,7 @@ package sqs.actions;
 import acl.BeverlyAction;
 import domain.Agenda;
 import domain.Cita;
+import org.joda.time.DateTime;
 import play.libs.Json;
 import service.AgendasService;
 
@@ -24,7 +25,11 @@ public class ActualizarAgenda implements BeverlyAction {
     @Override
     public void execute(Object[] args) {
         Cita cita = Json.fromJson(Json.parse((String) args[0]), Cita.class);
-        Optional<Agenda> agendaFound = agendasService.findFirst(cita.getAgenda());
+        String hora = cita.getHora();
+        DateTime dateTime = new DateTime(Long.parseLong(hora));
+        long fecha = dateTime.toLocalDate().toDate().toInstant().toEpochMilli();
+
+        Optional<Agenda> agendaFound = agendasService.findAnyAgenda(cita.getAgenda(),  Long.toString(fecha) );
         if (agendaFound.isPresent()) {
             agendaFound.ifPresent(agenda -> {
                 if (agenda.getCitas().stream().anyMatch(cita1 -> cita1.equals(cita))) {
@@ -37,7 +42,7 @@ public class ActualizarAgenda implements BeverlyAction {
                 agendasService.update(agenda, agenda.getId());
             });
         } else {
-            Agenda agenda = new Agenda(UUID.randomUUID().toString(), cita.getAgenda(), Collections.singletonList(cita));
+            Agenda agenda = new Agenda(UUID.randomUUID().toString(), cita.getAgenda(), Long.toString(fecha), Collections.singletonList(cita));
             agendasService.save(agenda);
         }
     }

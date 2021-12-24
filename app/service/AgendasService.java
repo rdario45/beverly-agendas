@@ -36,7 +36,7 @@ public class AgendasService {
         });
     }
 
-    public Optional<Agenda> findFirst(String agenda) {
-        return repository.findByName(agenda);
+    public Optional<Agenda> findAnyAgenda(String agenda, String fecha) {
+        return repository.findAnyAgenda(agenda, fecha);
     }
 }

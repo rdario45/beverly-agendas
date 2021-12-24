@@ -16,6 +16,7 @@ public class AgendaMapper implements DynamoMapper<Agenda> {
         return new Agenda(
                 Optional.ofNullable(map.get("id")).map(AttributeValue::s).orElse("undefined"),
                 Optional.ofNullable(map.get("manicurista")).map(AttributeValue::s).orElse("undefined"),
+                Optional.ofNullable(map.get("fecha")).map(AttributeValue::n).orElse("0"),
                 Optional.ofNullable(map.get("citas")).map(AttributeValue::l)
                 .map(attributeValues -> new CitaMapper().map(attributeValues))
                 .orElse(Collections.emptyList())

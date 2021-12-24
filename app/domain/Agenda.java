@@ -12,12 +12,16 @@ public class Agenda {
     @BeverlyAttrib(type="S")
     private String manicurista;
 
+    @BeverlyAttrib(type="N")
+    private String fecha;
+
     @BeverlyAttrib(type="L")
     private List<Cita> citas;
 
-    public Agenda(String id, String manicurista, List<Cita> citas) {
+    public Agenda(String id, String manicurista, String fecha, List<Cita> citas) {
         this.id = id;
         this.manicurista = manicurista;
+        this.fecha = fecha;
         this.citas = citas;
     }
 
@@ -35,6 +39,14 @@ public class Agenda {
 
     public void setManicurista(String manicurista) {
         this.manicurista = manicurista;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 
     public List<Cita> getCitas() {
