@@ -3,9 +3,9 @@ package service;
 import com.google.inject.Inject;
 import domain.Agenda;
 import repository.AgendaRepository;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class AgendasService {
 
@@ -16,7 +16,7 @@ public class AgendasService {
         this.repository = repository;
     }
 
-    public Optional<Agenda> find(Integer id) {
+    public Optional<Agenda> find(String id) {
         return repository.find(id);
     }
 
@@ -25,7 +25,18 @@ public class AgendasService {
     }
 
     public Agenda save(Agenda agenda) {
+        agenda.setId(UUID.randomUUID().toString());
         return repository.save(agenda);
     }
 
+    public Optional<Agenda> update(Agenda agenda, String id) {
+        return repository.find(id).map(found -> {
+            agenda.setId(found.getId());
+            return repository.save(agenda);
+        });
+    }
+
+    public Optional<Agenda> findFirst(String agenda) {
+        return repository.findByName(agenda);
+    }
 }

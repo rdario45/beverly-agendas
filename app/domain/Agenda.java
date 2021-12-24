@@ -2,19 +2,23 @@ package domain;
 
 import acl.BeverlyAttrib;
 
+import java.util.List;
+
 public class Agenda {
 
     @BeverlyAttrib(type="S")
     private String id;
 
     @BeverlyAttrib(type="S")
-    private String name;
+    private String manicurista;
 
-    public Agenda() {}
+    @BeverlyAttrib(type="L")
+    private List<Cita> citas;
 
-    public Agenda(String id, String name) {
+    public Agenda(String id, String manicurista, List<Cita> citas) {
         this.id = id;
-        this.name = name;
+        this.manicurista = manicurista;
+        this.citas = citas;
     }
 
     public String getId() {
@@ -25,11 +29,19 @@ public class Agenda {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getManicurista() {
+        return manicurista;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setManicurista(String manicurista) {
+        this.manicurista = manicurista;
+    }
+
+    public List<Cita> getCitas() {
+        return citas;
+    }
+
+    public void setCitas(List<Cita> citas) {
+        this.citas = citas;
     }
 }

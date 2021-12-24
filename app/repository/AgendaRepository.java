@@ -1,38 +1,36 @@
 package repository;
 
-import acl.BeverlyRepo;
-import acl.DynamoDB;
-import com.google.inject.Inject;
+import acl.BeverlyDB;
 import domain.Agenda;
 import mapper.AgendaMapper;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AgendaRepository {
 
-    private DynamoDbClient ddb;
-
-    @Inject
-    public AgendaRepository(BeverlyRepo beverlyRepo) {
-        this.ddb = beverlyRepo.getDdb();
-    }
-
-    public Optional<Agenda> find(Integer id) {
-        return DynamoDB.getItem( ddb, "agendas", "id", id.toString())
+    public Optional<Agenda> find(String id) {
+        return BeverlyDB.getItem("agendas", "id", id)
                 .map(valueMap -> new AgendaMapper().map(valueMap));
     }
 
     public List<Agenda> findAll() {
-        return DynamoDB.getAll(ddb, "agendas").stream()
+        return BeverlyDB.getAll("agendas").stream()
                 .map(valueMap -> new AgendaMapper().map(valueMap))
                 .collect(Collectors.toList());
     }
 
     public Agenda save(Agenda agenda) {
-        return DynamoDB.putItem(ddb, "agendas", agenda);
+        return BeverlyDB.putItem("agendas", agenda);
     }
 
+    public Optional<Agenda> findByName(String agenda) {
+        HashMap<String, AttributeValue> values = new HashMap<>();
+        values.put(":manicurista", AttributeValue.builder().s(agenda).build());
+        return BeverlyDB.getFirst("agendas", "manicurista = :manicurista", values)
+                .map(valueMap -> new AgendaMapper().map(valueMap));
+    }
 }

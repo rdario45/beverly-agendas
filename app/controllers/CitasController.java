@@ -23,30 +23,38 @@ public class CitasController extends Controller {
     }
 
     public Result list(Http.Request request) {
-        return  request.attrs().getOptional(Attrs.USER)
-                .map(user ->
-                        ok(Json.toJson(getAuthorizedResponse(user, citasService.findAll())))
-                ).orElse(unauthorized());
+        return request.attrs().getOptional(Attrs.USER).map(user ->
+                ok(Json.toJson(getAuthorizedResponse(user, citasService.findAll())))
+        ).orElse(unauthorized());
     }
 
-    public Result find(Integer id, Http.Request request) {
-        return  request.attrs().getOptional(Attrs.USER)
-                .map(user -> citasService.find(id)
-                        .map(cita ->
-                                ok(Json.toJson(getAuthorizedResponse(user, cita)))
-                        ).orElse(notFound())
-                ).orElse(unauthorized());
+    public Result find(String id, Http.Request request) {
+        return request.attrs().getOptional(Attrs.USER).map(user ->
+                citasService.find(id).map(cita ->
+                        ok(Json.toJson(getAuthorizedResponse(user, cita)))
+                ).orElse(notFound())
+        ).orElse(unauthorized());
     }
 
     @BodyParser.Of(BodyParser.Json.class)
     public Result save(Http.Request request) {
-        return request.attrs().getOptional(Attrs.USER)
-                .map(user -> {
-                    JsonNode json = request.body().asJson();
-                    Cita cita = Json.fromJson(json, Cita.class);
-                    Cita data = citasService.save(cita);
-                    return ok(Json.toJson(getAuthorizedResponse(user, data)));
-                }).orElse(unauthorized());
+        return request.attrs().getOptional(Attrs.USER).map(user -> {
+            JsonNode json = request.body().asJson();
+            Cita cita = Json.fromJson(json, Cita.class);
+            Cita data = citasService.save(cita);
+            return ok(Json.toJson(getAuthorizedResponse(user, data)));
+        }).orElse(unauthorized());
+    }
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result update(String id, Http.Request request) {
+        return request.attrs().getOptional(Attrs.USER).map(user -> {
+            JsonNode json = request.body().asJson();
+            Cita cita = Json.fromJson(json, Cita.class);
+            return citasService.update(cita, id).map(data ->
+                    ok(Json.toJson(getAuthorizedResponse(user, data)))
+            ).orElse(notFound());
+        }).orElse(unauthorized());
     }
 
     private HashMap getAuthorizedResponse(User user, Object data) {

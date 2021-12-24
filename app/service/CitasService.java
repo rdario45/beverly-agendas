@@ -1,11 +1,16 @@
 package service;
 
+import acl.BeverlySQS;
 import com.google.inject.Inject;
 import domain.Cita;
+import play.libs.Json;
 import repository.CitaRepository;
+import sqs.events.CitaActualizada;
+import sqs.events.CitaCreada;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CitasService {
 
@@ -16,7 +21,7 @@ public class CitasService {
         this.repository = repository;
     }
 
-    public Optional<Cita> find(Integer id) {
+    public Optional<Cita> find(String id) {
         return repository.find(id);
     }
 
@@ -25,7 +30,18 @@ public class CitasService {
     }
 
     public Cita save(Cita cita) {
+        cita.setId(UUID.randomUUID().toString());
+        CitaCreada citaCreada = new CitaCreada(cita);
+        BeverlySQS.send(Json.toJson(citaCreada).toString());
         return repository.save(cita);
     }
 
+    public Optional<Cita> update(Cita cita, String id) {
+        return repository.find(id).map(found -> {
+            cita.setId(found.getId());
+            CitaActualizada citaActualizada = new CitaActualizada(cita);
+            BeverlySQS.send(Json.toJson(citaActualizada).toString());
+            return repository.save(cita);
+        });
+    }
 }
