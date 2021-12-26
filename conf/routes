@@ -4,7 +4,7 @@
 
 # An example controller showing a sample home page
 GET     /agendas                    controllers.AgendasController.list(request: Request)
-GET     /agendas/:id                controllers.AgendasController.find(id: String, request: Request)
+GET     /agendas/:date              controllers.AgendasController.find(date: String, request: Request)
 POST    /agendas                    controllers.AgendasController.save(request: Request)
 PUT     /agendas/:id                controllers.AgendasController.update(id: String, request: Request)
 GET     /citas                      controllers.CitasController.list(request: Request)

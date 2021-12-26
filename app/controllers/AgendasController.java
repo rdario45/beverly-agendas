@@ -28,11 +28,9 @@ public class AgendasController extends Controller {
         ).orElse(unauthorized());
     }
 
-    public Result find(String id, Http.Request request) {
+    public Result find(String date, Http.Request request) {
         return request.attrs().getOptional(Attrs.USER).map(user ->
-                agendasService.find(id).map(agenda ->
-                        ok(Json.toJson(getAuthorizedResponse(user, agenda)))
-                ).orElse(notFound())
+                ok(Json.toJson(getAuthorizedResponse(user, agendasService.findAllByFecha(date))))
         ).orElse(unauthorized());
     }
 

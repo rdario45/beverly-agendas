@@ -34,4 +34,12 @@ public class AgendaRepository {
         return BeverlyDB.getFirst("agendas", "manicurista = :manicurista AND fecha = :fecha", values)
                 .map(valueMap -> new AgendaMapper().map(valueMap));
     }
+
+    public List<Agenda> findAllByFecha(String fecha) {
+        HashMap<String, AttributeValue> values = new HashMap<>();
+        values.put(":fecha", AttributeValue.builder().n(fecha).build());
+        return BeverlyDB.getAll("agendas", "fecha = :fecha", values)
+                .stream().map(valueMap -> new AgendaMapper().map(valueMap))
+                .collect(Collectors.toList());
+    }
 }
