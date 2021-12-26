@@ -29,7 +29,8 @@ public class ActualizarAgenda implements BeverlyAction {
         DateTime dateTime = new DateTime(Long.parseLong(hora));
         long fecha = dateTime.toLocalDate().toDate().toInstant().toEpochMilli();
 
-        Optional<Agenda> agendaFound = agendasService.findAnyAgenda(cita.getAgenda(),  Long.toString(fecha) );
+        Optional<Agenda> agendaFound = agendasService.findFirstAgenda(cita.getAgenda(), String.valueOf(fecha));
+
         if (agendaFound.isPresent()) {
             agendaFound.ifPresent(agenda -> {
                 if (agenda.getCitas().stream().anyMatch(cita1 -> cita1.equals(cita))) {
@@ -42,7 +43,7 @@ public class ActualizarAgenda implements BeverlyAction {
                 agendasService.update(agenda, agenda.getId());
             });
         } else {
-            Agenda agenda = new Agenda(UUID.randomUUID().toString(), cita.getAgenda(), Long.toString(fecha), Collections.singletonList(cita));
+            Agenda agenda = new Agenda(UUID.randomUUID().toString(), cita.getAgenda(), String.valueOf(fecha), Collections.singletonList(cita));
             agendasService.save(agenda);
         }
     }

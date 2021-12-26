@@ -166,12 +166,10 @@ public class BeverlyDB {
     public static Optional<Map<String, AttributeValue>> getFirst(String tableName,
                                                                  String filterExpression,
                                                                  Map<String, AttributeValue> values) {
-
         ScanRequest scanRequest = ScanRequest.builder()
                 .tableName(tableName)
                 .filterExpression(filterExpression)
                 .expressionAttributeValues(values)
-                .limit(1)
                 .build();
 
         ScanResponse scan = ddb.scan(scanRequest);
@@ -183,5 +181,21 @@ public class BeverlyDB {
             System.err.println(e.getMessage());
         }
         return items;
+    }
+
+    public static void removeItem(String tableName, String key, String keyVal) {
+        try {
+            Map<String, AttributeValue> keyMap = new HashMap<>();
+            keyMap.put(key, AttributeValue.builder().s(keyVal).build());
+
+            DeleteItemRequest dir = DeleteItemRequest.builder()
+                    .tableName(tableName)
+                    .key(keyMap)
+                    .build();
+
+            DeleteItemResponse deleteItemResponse = ddb.deleteItem(dir);
+        } catch (DynamoDbException e) {
+            System.err.format("%s %s "+e.getMessage(), tableName, key);
+        }
     }
 }

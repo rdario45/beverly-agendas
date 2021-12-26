@@ -24,4 +24,8 @@ public class CitaRepository {
     public Cita save(Cita cita) {
         return BeverlyDB.putItem("citas", cita);
     }
+
+    public void remove(String id) {
+        BeverlyDB.removeItem("citas", "id", id);
+    }
 }

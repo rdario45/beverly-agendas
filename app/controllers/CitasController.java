@@ -57,6 +57,14 @@ public class CitasController extends Controller {
         }).orElse(unauthorized());
     }
 
+    public Result delete(String id, Http.Request request) {
+        return request.attrs().getOptional(Attrs.USER).map(user ->
+                        citasService.delete(id).map(data ->
+                                ok(Json.toJson(getAuthorizedResponse(user, data)))
+                        ).orElse(notFound()))
+                .orElse(unauthorized());
+    }
+
     private HashMap getAuthorizedResponse(User user, Object data) {
         HashMap response = new HashMap();
         response.put("data", data);
