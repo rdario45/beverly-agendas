@@ -10,15 +10,11 @@ public class Servicio {
     @BeverlyAttrib(type="N")
     private String valor;
 
-    @BeverlyAttrib(type="N")
-    private String duracion;
-
     public Servicio() {}
 
-    public Servicio(String nombre, String valor, String duracion) {
+    public Servicio(String nombre, String valor) {
         this.nombre = nombre;
         this.valor = valor;
-        this.duracion = duracion;
     }
 
     public String getNombre() {
@@ -37,11 +33,4 @@ public class Servicio {
         this.valor = valor;
     }
 
-    public String getDuracion() {
-        return duracion;
-    }
-
-    public void setDuracion(String duracion) {
-        this.duracion = duracion;
-    }
 }
