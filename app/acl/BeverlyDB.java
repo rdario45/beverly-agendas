@@ -28,8 +28,8 @@ public class BeverlyDB {
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        System.getenv("AWS_ACCESS_KEY_ID"),
-                                        System.getenv("AWS_SECRET_ACCESS_KEY")
+                                        config.getString("aws.access_key_id"),
+                                        config.getString("aws.secret_access_key")
                                 )
                         )
                 ).build();
@@ -42,7 +42,7 @@ public class BeverlyDB {
         try {
             items = scan.items();
         } catch (Exception e) {
-            System.err.println("Unable to scan the table:");
+            System.err.format("Unable to scan the table: %s", tableName);
             System.err.println(e.getMessage());
         }
         return items;
@@ -51,6 +51,7 @@ public class BeverlyDB {
     public static Optional<Map<String, AttributeValue>> getItem(String tableName,
                                                                 String key,
                                                                 String keyVal) {
+
         HashMap<String,AttributeValue> keyToGet = new HashMap<>();
         keyToGet.put(key, AttributeValue.builder().s(keyVal).build());
         GetItemRequest request = GetItemRequest.builder()
@@ -193,7 +194,7 @@ public class BeverlyDB {
                     .key(keyMap)
                     .build();
 
-            DeleteItemResponse deleteItemResponse = ddb.deleteItem(dir);
+            ddb.deleteItem(dir);
         } catch (DynamoDbException e) {
             System.err.format("%s %s "+e.getMessage(), tableName, key);
         }

@@ -27,13 +27,10 @@ public class AgendaRepository {
         return BeverlyDB.putItem("agendas", agenda);
     }
 
-    public Optional<Agenda> findFirstAgenda(String agenda, String fecha) {
-
+    public Optional<Agenda> findFirstAgendaByFecha(String agenda, String fecha) {
         HashMap<String, AttributeValue> values = new HashMap<>();
-
         values.put(":manicurista", AttributeValue.builder().s(agenda).build());
         values.put(":fecha", AttributeValue.builder().n(fecha).build());
-
         return BeverlyDB.getFirst("agendas", "manicurista = :manicurista AND fecha = :fecha", values)
                         .map(valueMap -> new AgendaMapper().map(valueMap));
     }

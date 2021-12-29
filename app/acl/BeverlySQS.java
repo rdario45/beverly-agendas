@@ -24,20 +24,21 @@ public class BeverlySQS {
     private static final String queueUrl =  "https://sqs.us-west-1.amazonaws.com/711328658350/agendas";
     private final ActorSystem actorSystem;
     private final ExecutionContext executionContext;
-    private ActionsEvent actionsSuscriber;
+    private ActionsEvent actionsSubscriber;
 
     @Inject
     public BeverlySQS(Config config, ActorSystem actorSystem, ExecutionContext executionContext, ActionsEvent actionsSubscriber) {
         System.out.println("BeberlySQS enabled.");
-        this.actionsSuscriber = actionsSubscriber;
+        this.actionsSubscriber = actionsSubscriber;
         this.actorSystem = actorSystem;
         this.executionContext = executionContext;
         client = SqsClient.builder()
                 .region(Region.US_WEST_1)
-                .credentialsProvider(StaticCredentialsProvider.create(
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        System.getenv("AWS_ACCESS_KEY_ID"),
-                                        System.getenv("AWS_SECRET_ACCESS_KEY")
+                                        config.getString("aws.access_key_id"),
+                                        config.getString("aws.secret_access_key")
                                 )
                         )
                 ).build();
@@ -61,16 +62,16 @@ public class BeverlySQS {
 
                             for (Message m: messages) {
                                 System.out.println(m.body());
-                                proccess(m);
+                                process(m);
                                 remove(m);
                             }
                         },
                         this.executionContext);
     }
 
-    private void proccess(Message m) {
+    private void process(Message m) {
         BeverlyMsg beverlyMsg = Json.fromJson(Json.parse(m.body()), BeverlyMsg.class);
-        actionsSuscriber.update(beverlyMsg.getEvent(), Json.parse(m.body()).get("msg").toString());
+        actionsSubscriber.update(beverlyMsg.getEvent(), Json.parse(m.body()).get("msg").toString());
     }
 
     private void remove(Message m) {
