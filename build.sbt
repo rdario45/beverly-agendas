@@ -1,4 +1,4 @@
-name := """beverly-agenda"""
+name := """beverly-agendas"""
 organization := "com.beverly-spa"
 
 version := "1.0-SNAPSHOT"
