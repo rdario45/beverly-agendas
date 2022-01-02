@@ -1,6 +1,7 @@
 package modules;
 
 import acl.BeverlyDB;
+import acl.BeverlySNS;
 import acl.BeverlySQS;
 import com.google.inject.AbstractModule;
 import sqs.ActionsEvent;
@@ -13,6 +14,7 @@ public class Global extends AbstractModule {
     public void configure() {
         bind(BeverlyDB.class).asEagerSingleton();
         bind(BeverlySQS.class).asEagerSingleton();
+//        bind(BeverlySNS.class).asEagerSingleton();
         bind(ActionsEvent.class).asEagerSingleton();
     }
 }

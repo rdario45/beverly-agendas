@@ -3,6 +3,7 @@ package service;
 import com.google.inject.Inject;
 import domain.Agenda;
 import repository.AgendaRepository;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,14 +15,6 @@ public class AgendasService {
     @Inject
     public AgendasService(AgendaRepository repository) {
         this.repository = repository;
-    }
-
-    public Optional<Agenda> find(String id) {
-        return repository.find(id);
-    }
-
-    public List<Agenda> findAll() {
-        return repository.findAll();
     }
 
     public Agenda save(Agenda agenda) {
@@ -36,8 +29,8 @@ public class AgendasService {
         });
     }
 
-    public List<Agenda> findAllByFecha(String date) {
-        return repository.findAllByFecha(date);
+    public List<Agenda> findByFecha(String date) {
+        return repository.findByFecha(date);
     }
 
     public Optional<Agenda> findFirstAgenda(String agenda, String fecha) {

@@ -1,11 +1,5 @@
-# Beverly API
+# Beverly AGENDAS
 
-## List of Content
-
-- Requirements
-
-### Requirements
-
-- sbt
-
-
+## Requerimientos
+- Java 8+
+- SBT
