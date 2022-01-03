@@ -4,7 +4,7 @@ import acl.BeverlyAction;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import sqs.actions.ActualizarAgenda;
-import sqs.actions.ActualizarAgendaDel;
+import sqs.actions.DisminuirAgenda;
 import sqs.events.CitaActualizada;
 import sqs.events.CitaCreada;
 import sqs.events.CitaEliminada;
@@ -20,11 +20,11 @@ public class ActionsEvent {
     private Map<String, List<BeverlyAction>> actions = new HashMap<>();
 
     @Inject
-    public ActionsEvent(ActualizarAgenda actualizarAgenda,
-                        ActualizarAgendaDel actualizarAgendaDel) {
-        actions.put(CitaCreada.class.getSimpleName(), Arrays.asList(actualizarAgenda));
-        actions.put(CitaActualizada.class.getSimpleName(), Arrays.asList(actualizarAgenda));
-        actions.put(CitaEliminada.class.getSimpleName(), Arrays.asList(actualizarAgendaDel));
+    public ActionsEvent(ActualizarAgenda aumentarAgenda,
+                        DisminuirAgenda disminuirAgenda) {
+        actions.put(CitaCreada.class.getSimpleName(), Arrays.asList(aumentarAgenda));
+        actions.put(CitaActualizada.class.getSimpleName(), Arrays.asList(aumentarAgenda));
+        actions.put(CitaEliminada.class.getSimpleName(), Arrays.asList(disminuirAgenda));
     }
 
     public void update(String eventName, Object... args) {

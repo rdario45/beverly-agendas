@@ -73,6 +73,7 @@ public class Cita {
 
     public Cita update(Cita cita) {
         this.setHora(cita.getHora());
+        this.setClienta(cita.getClienta());
         this.setServicios(cita.getServicios());
         return this;
     }

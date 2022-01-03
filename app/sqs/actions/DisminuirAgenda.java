@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ActualizarAgendaDel implements BeverlyAction {
+public class DisminuirAgenda implements BeverlyAction {
 
     private AgendasService agendasService;
 
     @Inject
-    public ActualizarAgendaDel(AgendasService agendasService) {
+    public DisminuirAgenda(AgendasService agendasService) {
         this.agendasService = agendasService;
     }
 
@@ -32,7 +32,7 @@ public class ActualizarAgendaDel implements BeverlyAction {
         if (agendaFound.isPresent()) {
             agendaFound.ifPresent(agenda -> {
                 List<Cita> collect = agenda.getCitas().stream()
-                        .filter(cita1 -> !cita1.getId().equals(cita.getId()))
+                        .filter(compare -> !compare.getId().equals(cita.getId()))
                         .collect(Collectors.toList());
                 agenda.setCitas(collect);
                 agendasService.update(agenda, agenda.getId());

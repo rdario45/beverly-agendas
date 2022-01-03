@@ -26,17 +26,6 @@ public class AgendasController extends Controller {
         ).orElse(unauthorized());
     }
 
-//    @BodyParser.Of(BodyParser.Json.class)
-//    public Result delete(String id, Http.Request request) {
-//        return request.attrs().getOptional(Attrs.USER).map(user -> {
-//            JsonNode json = request.body().asJson();
-//            Agenda agenda = Json.fromJson(json, Agenda.class);
-//            return agendasService.delete(agenda, id).map(data ->
-//                    ok(Json.toJson(getAuthorizedResponse(user, data)))
-//            ).orElse(notFound());
-//        }).orElse(unauthorized());
-//    }
-
     private HashMap getAuthorizedResponse(User user, Object data) {
         HashMap response = new HashMap();
         response.put("data", data);

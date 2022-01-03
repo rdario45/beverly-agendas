@@ -75,14 +75,11 @@ public class BeverlyDB {
     }
 
     public static <T> T putItem(String tableName, T record) {
-
         HashMap<String, AttributeValue> itemValues = getAttributeValueHashMapFromRecord(record);
-
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(itemValues)
                 .build();
-
         try {
             ddb.putItem(request);
         } catch (ResourceNotFoundException e) {
@@ -90,7 +87,6 @@ public class BeverlyDB {
         } catch (DynamoDbException e) {
             System.err.println(e.getMessage());
         }
-
         return (T) record;
     }
 
@@ -108,7 +104,6 @@ public class BeverlyDB {
 
     private static <T> AttributeValue getAttributeValueFromRecord(T record, Field field) {
         AttributeValue attributeValue = null;
-
         try {
             String methodName = buildMethodName(field.getName()); //TODO mejorar la dependencia creada.
             Method method = record.getClass().getDeclaredMethod(methodName);
@@ -146,13 +141,11 @@ public class BeverlyDB {
     public static List<Map<String, AttributeValue>> getAll(String tableName,
                                                            String filterExpression,
                                                            Map<String, AttributeValue> values) {
-
         ScanRequest scanRequest = ScanRequest.builder()
                 .tableName(tableName)
                 .filterExpression(filterExpression)
                 .expressionAttributeValues(values)
                 .build();
-
         ScanResponse scan = ddb.scan(scanRequest);
         List<Map<String, AttributeValue>> items = null;
         try {
@@ -172,7 +165,6 @@ public class BeverlyDB {
                 .filterExpression(filterExpression)
                 .expressionAttributeValues(values)
                 .build();
-
         ScanResponse scan = ddb.scan(scanRequest);
         Optional<Map<String, AttributeValue>> items = null;
         try {
@@ -193,7 +185,6 @@ public class BeverlyDB {
                     .tableName(tableName)
                     .key(keyMap)
                     .build();
-
             ddb.deleteItem(dir);
         } catch (DynamoDbException e) {
             System.err.format("%s %s "+e.getMessage(), tableName, key);
