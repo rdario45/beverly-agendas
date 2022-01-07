@@ -9,10 +9,8 @@ import service.AgendasService;
 
 import javax.inject.Inject;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ActualizarAgenda implements BeverlyAction {
 
@@ -34,10 +32,14 @@ public class ActualizarAgenda implements BeverlyAction {
 
         if (agendaFound.isPresent()) {
             agendaFound.ifPresent(agenda -> {
-                List<Cita> citas = agenda.getCitas().stream()
-                        .map(cita1 -> cita1.getId().equals(cita.getId()) ? cita1.update(cita) : cita1)
-                        .collect(Collectors.toList());
-                agenda.setCitas(citas);
+                Optional<Cita> any = agenda.getCitas().stream()
+                        .filter(x -> x.getId().equals(cita.getId())).findAny();
+
+                if (any.isPresent()) {
+                    agenda.getCitas().stream().map(x -> x.equals(cita) ? x.update(cita) : x);
+                } else {
+                    agenda.getCitas().add(cita);
+                }
                 agendasService.update(agenda, agenda.getId());
             });
         } else {

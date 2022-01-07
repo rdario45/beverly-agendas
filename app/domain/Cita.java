@@ -81,7 +81,7 @@ public class Cita {
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Cita) {
-            return this.getClienta().equals(((Cita) obj).getClienta());
+            return this.id.equals(((Cita) obj).id);
         }
         return super.equals(obj);
     }
