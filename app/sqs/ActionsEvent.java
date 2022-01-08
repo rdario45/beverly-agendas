@@ -20,10 +20,10 @@ public class ActionsEvent {
     private Map<String, List<BeverlyAction>> actions = new HashMap<>();
 
     @Inject
-    public ActionsEvent(ActualizarAgenda aumentarAgenda,
+    public ActionsEvent(ActualizarAgenda actualizarAgenda,
                         DisminuirAgenda disminuirAgenda) {
-        actions.put(CitaCreada.class.getSimpleName(), Arrays.asList(aumentarAgenda));
-        actions.put(CitaActualizada.class.getSimpleName(), Arrays.asList(aumentarAgenda));
+        actions.put(CitaCreada.class.getSimpleName(), Arrays.asList(actualizarAgenda));
+        actions.put(CitaActualizada.class.getSimpleName(), Arrays.asList(actualizarAgenda));
         actions.put(CitaEliminada.class.getSimpleName(), Arrays.asList(disminuirAgenda));
     }
 

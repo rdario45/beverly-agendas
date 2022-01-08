@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ActualizarAgenda implements BeverlyAction {
 
@@ -34,9 +35,8 @@ public class ActualizarAgenda implements BeverlyAction {
             agendaFound.ifPresent(agenda -> {
                 Optional<Cita> any = agenda.getCitas().stream()
                         .filter(x -> x.getId().equals(cita.getId())).findAny();
-
                 if (any.isPresent()) {
-                    agenda.getCitas().stream().map(x -> x.equals(cita) ? x.update(cita) : x);
+                    agenda.setCitas(agenda.getCitas().stream().map(x -> x.equals(cita) ? x.update(cita) : x).collect(Collectors.toList()));
                 } else {
                     agenda.getCitas().add(cita);
                 }
