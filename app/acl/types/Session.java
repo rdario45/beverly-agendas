@@ -8,22 +8,22 @@ import java.util.Optional;
 
 public class Session {
 
-    @BeverlyAttrib(type="S")
+    @BeverlyAttrib(type = "S")
     private String accessToken;
 
-    @BeverlyAttrib(type="N")
+    @BeverlyAttrib(type = "N")
     private long lastRefresh;
 
     @BeverlyAttrib(type = "M")
     private User user;
-    
+
     public Session(Map<String, AttributeValue> map) {
         this.accessToken = map.get("accessToken").s();
         this.lastRefresh = Optional.ofNullable(map.get("lastRefresh")).map(AttributeValue::n).map(Long::parseLong).orElse(0l);
-        Map<String, AttributeValue> user = Optional.ofNullable( map.get("user")).map(AttributeValue::m).get();
+        Map<String, AttributeValue> user = Optional.ofNullable(map.get("user")).map(AttributeValue::m).get();
         this.user = new User(
-            Optional.ofNullable(user.get("name")).map(AttributeValue::s).orElse("undefined"),
-            Optional.ofNullable(user.get("phone")).map(AttributeValue::s).orElse("undefined")
+                Optional.ofNullable(user.get("name")).map(AttributeValue::s).orElse("undefined"),
+                Optional.ofNullable(user.get("phone")).map(AttributeValue::s).orElse("undefined")
         );
     }
 

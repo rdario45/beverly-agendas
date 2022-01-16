@@ -52,7 +52,7 @@ public class BeverlyDB {
                                                                 String key,
                                                                 String keyVal) {
 
-        HashMap<String,AttributeValue> keyToGet = new HashMap<>();
+        HashMap<String, AttributeValue> keyToGet = new HashMap<>();
         keyToGet.put(key, AttributeValue.builder().s(keyVal).build());
         GetItemRequest request = GetItemRequest.builder()
                 .key(keyToGet)
@@ -60,7 +60,7 @@ public class BeverlyDB {
                 .build();
 
         try {
-            Map<String,AttributeValue> returnedItem = ddb.getItem(request).item();
+            Map<String, AttributeValue> returnedItem = ddb.getItem(request).item();
 
             if (!returnedItem.isEmpty()) {
                 return Optional.of(returnedItem);
@@ -69,7 +69,7 @@ public class BeverlyDB {
                 return Optional.empty();
             }
         } catch (DynamoDbException e) {
-            System.err.format("%s %s "+e.getMessage(), tableName, key);
+            System.err.format("%s %s " + e.getMessage(), tableName, key);
         }
         return Optional.empty();
     }
@@ -125,7 +125,7 @@ public class BeverlyDB {
                     List invoke1 = (List) method.invoke(record);
                     Collection<HashMap<String, AttributeValue>> attributeValueHashMapFromRecordList = getAttributeValueHashMapFromRecordList(invoke1);
                     List<AttributeValue> collect = attributeValueHashMapFromRecordList.stream().map(stringAttributeValueHashMap -> AttributeValue.builder().m(stringAttributeValueHashMap).build()).collect(Collectors.toList());
-                    attributeValue =  AttributeValue.builder().l(collect).build();
+                    attributeValue = AttributeValue.builder().l(collect).build();
                     break;
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -135,7 +135,7 @@ public class BeverlyDB {
     }
 
     private static String buildMethodName(String campo) {
-        return "get"+campo.substring(0, 1).toUpperCase()+campo.substring(1);
+        return "get" + campo.substring(0, 1).toUpperCase() + campo.substring(1);
     }
 
     public static List<Map<String, AttributeValue>> getAll(String tableName,
@@ -187,7 +187,7 @@ public class BeverlyDB {
                     .build();
             ddb.deleteItem(dir);
         } catch (DynamoDbException e) {
-            System.err.format("%s %s "+e.getMessage(), tableName, key);
+            System.err.format("%s %s " + e.getMessage(), tableName, key);
         }
     }
 }

@@ -7,5 +7,6 @@ import java.util.Map;
 
 public interface DynamoMapper<T> {
     T map(Map<String, AttributeValue> map);
+
     List<T> map(List<AttributeValue> list);
 }

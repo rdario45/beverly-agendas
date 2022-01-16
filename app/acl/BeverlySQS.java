@@ -63,10 +63,10 @@ public class BeverlySQS {
 
                             List<Message> messages = sqsClient.receiveMessage(build).messages();
 
-                            for (Message message: messages) {
+                            for (Message message : messages) {
                                 process(message);
                                 remove(message);
-                                System.out.println("processed: "+ message.body());
+                                System.out.println("processed: " + message.body());
                             }
                         },
                         this.executionContext);

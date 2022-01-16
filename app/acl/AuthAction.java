@@ -43,7 +43,7 @@ public class AuthAction extends Action.Simple {
 
     private void updateSessionLastRefresh(Session session, long currentMillis) {
         session.setLastRefresh(currentMillis);
-        BeverlyDB.putItem( "sessions", session);
+        BeverlyDB.putItem("sessions", session);
     }
 
 }

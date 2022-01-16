@@ -4,10 +4,10 @@ import acl.BeverlyAttrib;
 
 public class User {
 
-    @BeverlyAttrib(type="S")
+    @BeverlyAttrib(type = "S")
     public String name;
 
-    @BeverlyAttrib(type="S")
+    @BeverlyAttrib(type = "S")
     public String phone;
 
     public User(String name, String phone) {

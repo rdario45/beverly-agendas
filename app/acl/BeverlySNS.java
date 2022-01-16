@@ -21,7 +21,7 @@ public class BeverlySNS {
     public BeverlySNS(Config config) {
         System.out.println("BeberlySNS enabled.");
         this.topicArn = config.getString("aws.topicArn");
-          snsClient = SnsClient.builder().region(Region.US_WEST_1)
+        snsClient = SnsClient.builder().region(Region.US_WEST_1)
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
@@ -39,7 +39,7 @@ public class BeverlySNS {
                     .topicArn(topicArn)
                     .build();
             snsClient.publish(request);
-            System.out.println("published: "+ message);
+            System.out.println("published: " + message);
         } catch (SqsException e) {
             System.err.println(e.awsErrorDetails().errorMessage());
             System.exit(1);
