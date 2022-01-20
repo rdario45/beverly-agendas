@@ -26,6 +26,12 @@ public class AgendasController extends Controller {
         ).orElse(unauthorized());
     }
 
+    public Result findWeek(String startDate, String finalDate, Http.Request request) {
+        return request.attrs().getOptional(Attrs.USER).map(user ->
+                ok(Json.toJson(getAuthorizedResponse(user, agendasService.findByRange(startDate, finalDate))))
+        ).orElse(unauthorized());
+    }
+
     private HashMap getAuthorizedResponse(User user, Object data) {
         HashMap response = new HashMap();
         response.put("data", data);

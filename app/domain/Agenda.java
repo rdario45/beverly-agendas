@@ -6,16 +6,16 @@ import java.util.List;
 
 public class Agenda {
 
-    @BeverlyAttrib(type="S")
+    @BeverlyAttrib(type = "S")
     private String id;
 
-    @BeverlyAttrib(type="S")
+    @BeverlyAttrib(type = "S")
     private String manicurista;
 
-    @BeverlyAttrib(type="N")
+    @BeverlyAttrib(type = "N")
     private String fecha;
 
-    @BeverlyAttrib(type="L")
+    @BeverlyAttrib(type = "L")
     private List<Cita> citas;
 
     public Agenda(String id, String manicurista, String fecha, List<Cita> citas) {

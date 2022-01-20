@@ -26,13 +26,22 @@ public class AgendaRepository {
         values.put(":manicurista", AttributeValue.builder().s(agenda).build());
         values.put(":fecha", AttributeValue.builder().n(fecha).build());
         return BeverlyDB.getFirst("agendas", "manicurista = :manicurista AND fecha = :fecha", values)
-                        .map(valueMap -> new AgendaMapper().map(valueMap));
+                .map(valueMap -> new AgendaMapper().map(valueMap));
     }
 
     public List<Agenda> findByFecha(String fecha) {
         HashMap<String, AttributeValue> values = new HashMap<>();
         values.put(":fecha", AttributeValue.builder().n(fecha).build());
         return BeverlyDB.getAll("agendas", "fecha = :fecha", values)
+                .stream().map(valueMap -> new AgendaMapper().map(valueMap))
+                .collect(Collectors.toList());
+    }
+
+    public List<Agenda> findByRange(String startDate, String finalDate) {
+        HashMap<String, AttributeValue> values = new HashMap<>();
+        values.put(":fechaInicial", AttributeValue.builder().n(startDate).build());
+        values.put(":fechaFinal", AttributeValue.builder().n(finalDate).build());
+        return BeverlyDB.getAll("agendas", "fecha BETWEEN :fechaInicial and :fechaFinal", values)
                 .stream().map(valueMap -> new AgendaMapper().map(valueMap))
                 .collect(Collectors.toList());
     }

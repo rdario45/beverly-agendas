@@ -3,4 +3,5 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /agendas/:date              controllers.AgendasController.find(date: String, request: Request)
+GET     /agendas/:date                              controllers.AgendasController.find(date: String, request: Request)
+GET     /agendas/:dateStart/:dateEnd                controllers.AgendasController.findWeek(dateStart: String, dateEnd: String, request: Request)

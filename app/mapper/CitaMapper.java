@@ -19,8 +19,8 @@ public class CitaMapper implements DynamoMapper<Cita> {
                 Optional.ofNullable(map.get("agenda")).map(AttributeValue::s).orElse("undefined"),
                 Optional.ofNullable(map.get("clienta")).map(AttributeValue::s).orElse("undefined"),
                 Optional.ofNullable(map.get("servicios")).map(AttributeValue::l)
-                .map(attributeValues -> new ServicioMapper().map(attributeValues))
-                .orElse(Collections.emptyList())
+                        .map(attributeValues -> new ServicioMapper().map(attributeValues))
+                        .orElse(Collections.emptyList())
         );
     }
 

@@ -36,4 +36,8 @@ public class AgendasService {
     public Optional<Agenda> findFirstAgenda(String agenda, String fecha) {
         return repository.findFirstAgendaByFecha(agenda, fecha);
     }
+
+    public List<Agenda>  findByRange(String startDate, String finalDate) {
+        return repository.findByRange(startDate, finalDate);
+    }
 }

@@ -7,7 +7,8 @@ import sqs.ActionsEvent;
 
 public class Global extends AbstractModule {
 
-    public Global() { }
+    public Global() {
+    }
 
     @Override
     public void configure() {

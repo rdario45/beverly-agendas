@@ -27,7 +27,7 @@ public class DisminuirAgenda implements BeverlyAction {
         DateTime dateTime = new DateTime(Long.parseLong(hora));
         long fecha = dateTime.toLocalDate().toDate().toInstant().toEpochMilli();
 
-        Optional<Agenda> agendaFound = agendasService.findFirstAgenda(cita.getAgenda(),  Long.toString(fecha) );
+        Optional<Agenda> agendaFound = agendasService.findFirstAgenda(cita.getAgenda(), Long.toString(fecha));
 
         if (agendaFound.isPresent()) {
             agendaFound.ifPresent(agenda -> {

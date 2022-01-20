@@ -6,28 +6,29 @@ import java.util.List;
 
 public class Cita {
 
-    @BeverlyAttrib(type="S")
+    @BeverlyAttrib(type = "S")
     private String id;
 
-    @BeverlyAttrib(type="N")
+    @BeverlyAttrib(type = "N")
     private String hora;
 
-    @BeverlyAttrib(type="S")
+    @BeverlyAttrib(type = "S")
     private String agenda;
 
-    @BeverlyAttrib(type="S")
-    private String clienta;
+    @BeverlyAttrib(type = "S")
+    private String cliente;
 
-    @BeverlyAttrib(type="L")
+    @BeverlyAttrib(type = "L")
     private List<Servicio> servicios;
 
-    public Cita() {}
+    public Cita() {
+    }
 
-    public Cita(String id, String hora, String agenda, String clienta, List<Servicio> servicios) {
+    public Cita(String id, String hora, String agenda, String cliente, List<Servicio> servicios) {
         this.id = id;
         this.hora = hora;
         this.agenda = agenda;
-        this.clienta = clienta;
+        this.cliente = cliente;
         this.servicios = servicios;
     }
 
@@ -55,12 +56,12 @@ public class Cita {
         this.agenda = agenda;
     }
 
-    public String getClienta() {
-        return clienta;
+    public String getCliente() {
+        return cliente;
     }
 
-    public void setClienta(String clienta) {
-        this.clienta = clienta;
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
     }
 
     public List<Servicio> getServicios() {
@@ -73,14 +74,14 @@ public class Cita {
 
     public Cita update(Cita cita) {
         this.setHora(cita.getHora());
-        this.setClienta(cita.getClienta());
+        this.setCliente(cita.getCliente());
         this.setServicios(cita.getServicios());
         return this;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof Cita) {
+        if (obj instanceof Cita) {
             return this.id.equals(((Cita) obj).id);
         }
         return super.equals(obj);
