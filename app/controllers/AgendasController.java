@@ -32,6 +32,13 @@ public class AgendasController extends Controller {
         ).orElse(unauthorized());
     }
 
+    public Result getBalanceWeek(String startDate, String finalDate, Http.Request request) {
+        return request.attrs().getOptional(Attrs.USER).map(user ->
+                ok(Json.toJson(getAuthorizedResponse(user, agendasService.getBalanceWeek(startDate, finalDate))))
+        ).orElse(unauthorized());
+    }
+
+
     private HashMap getAuthorizedResponse(User user, Object data) {
         HashMap response = new HashMap();
         response.put("data", data);
