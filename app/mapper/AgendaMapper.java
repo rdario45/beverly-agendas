@@ -1,6 +1,6 @@
 package mapper;
 
-import acl.DynamoMapper;
+import acl.BeverlyDynamoMapper;
 import domain.Agenda;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class AgendaMapper implements DynamoMapper<Agenda> {
+public class AgendaMapper implements BeverlyDynamoMapper<Agenda> {
 
     public Agenda map(Map<String, AttributeValue> map) {
         return new Agenda(

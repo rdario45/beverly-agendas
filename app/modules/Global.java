@@ -1,19 +1,18 @@
 package modules;
 
-import acl.BeverlyDB;
+import acl.BeverlyDynamoDB;
 import acl.BeverlySQS;
 import com.google.inject.AbstractModule;
-import sqs.ActionsEvent;
+import sqs.BeverlyActionsEvent;
 
 public class Global extends AbstractModule {
 
-    public Global() {
-    }
+    public Global() { }
 
     @Override
     public void configure() {
-        bind(BeverlyDB.class).asEagerSingleton();
+        bind(BeverlyDynamoDB.class).asEagerSingleton();
         bind(BeverlySQS.class).asEagerSingleton();
-        bind(ActionsEvent.class).asEagerSingleton();
+        bind(BeverlyActionsEvent.class).asEagerSingleton();
     }
 }

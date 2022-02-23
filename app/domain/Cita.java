@@ -1,8 +1,9 @@
 package domain;
 
-import acl.BeverlyAttrib;
+import acl.types.BeverlyAttrib;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Cita {
 
@@ -21,15 +22,37 @@ public class Cita {
     @BeverlyAttrib(type = "L")
     private List<Servicio> servicios;
 
-    public Cita() {
-    }
-
     public Cita(String id, String hora, String agenda, String cliente, List<Servicio> servicios) {
         this.id = id;
         this.hora = hora;
         this.agenda = agenda;
         this.cliente = cliente;
         this.servicios = servicios;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cita cita = (Cita) o;
+        return id.equals(cita.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public List<Servicio> getServicios() {
+        return servicios;
+    }
+
+    public Cita update(Cita cita) {
+        this.hora = cita.hora;
+//        this.agenda = cita.agenda;
+        this.cliente = cita.cliente;
+        this.servicios = cita.servicios;
+        return this;
     }
 
     public String getId() {
@@ -64,26 +87,7 @@ public class Cita {
         this.cliente = cliente;
     }
 
-    public List<Servicio> getServicios() {
-        return servicios;
-    }
-
     public void setServicios(List<Servicio> servicios) {
         this.servicios = servicios;
-    }
-
-    public Cita update(Cita cita) {
-        this.setHora(cita.getHora());
-        this.setCliente(cita.getCliente());
-        this.setServicios(cita.getServicios());
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Cita) {
-            return this.id.equals(((Cita) obj).id);
-        }
-        return super.equals(obj);
     }
 }

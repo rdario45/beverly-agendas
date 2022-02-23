@@ -1,8 +1,8 @@
 package controllers;
 
-import acl.AuthAction;
-import acl.types.Attrs;
-import acl.types.User;
+import acl.BeverlyAuthAction;
+import acl.types.BeverlyHttpReqAttrib;
+import acl.types.BeverlyHttpAuthObject;
 import com.google.inject.Inject;
 import play.libs.Json;
 import play.mvc.*;
@@ -10,7 +10,7 @@ import service.AgendasService;
 
 import java.util.HashMap;
 
-@With(AuthAction.class)
+@With(BeverlyAuthAction.class)
 public class AgendasController extends Controller {
 
     private AgendasService agendasService;
@@ -20,29 +20,23 @@ public class AgendasController extends Controller {
         this.agendasService = agendasService;
     }
 
-    public Result find(String date, Http.Request request) {
-        return request.attrs().getOptional(Attrs.USER).map(user ->
-                ok(Json.toJson(getAuthorizedResponse(user, agendasService.findByFecha(date))))
-        ).orElse(unauthorized());
-    }
-
-    public Result findWeek(String startDate, String finalDate, Http.Request request) {
-        return request.attrs().getOptional(Attrs.USER).map(user ->
+    public Result getWeeklyAgenda(String startDate, String finalDate, Http.Request request) {
+        return request.attrs().getOptional(BeverlyHttpReqAttrib.USER).map(user ->
                 ok(Json.toJson(getAuthorizedResponse(user, agendasService.findByRange(startDate, finalDate))))
         ).orElse(unauthorized());
     }
 
-    public Result getBalanceWeek(String startDate, String finalDate, Http.Request request) {
-        return request.attrs().getOptional(Attrs.USER).map(user ->
+    public Result getWeeklyBalance(String startDate, String finalDate, Http.Request request) {
+        return request.attrs().getOptional(BeverlyHttpReqAttrib.USER).map(user ->
                 ok(Json.toJson(getAuthorizedResponse(user, agendasService.getBalanceWeek(startDate, finalDate))))
         ).orElse(unauthorized());
     }
 
 
-    private HashMap getAuthorizedResponse(User user, Object data) {
+    private HashMap getAuthorizedResponse(BeverlyHttpAuthObject user, Object data) {
         HashMap response = new HashMap();
         response.put("data", data);
-        response.put("user", user);
+        response.put("user", user.phone);
         return response;
     }
 

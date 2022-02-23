@@ -1,6 +1,6 @@
 package mapper;
 
-import acl.DynamoMapper;
+import acl.BeverlyDynamoMapper;
 import domain.Cita;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CitaMapper implements DynamoMapper<Cita> {
+public class CitaMapper implements BeverlyDynamoMapper<Cita> {
 
     public Cita map(Map<String, AttributeValue> map) {
         return new Cita(

@@ -1,5 +1,6 @@
 package acl;
 
+import acl.types.BeverlyEvent;
 import akka.actor.ActorSystem;
 import com.google.inject.Inject;
 import com.typesafe.config.Config;
@@ -14,7 +15,7 @@ import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
-import sqs.ActionsEvent;
+import sqs.BeverlyActionsEvent;
 
 import javax.inject.Singleton;
 import java.util.List;
@@ -27,13 +28,13 @@ public class BeverlySQS {
     private static String queueUrl;
     private final ActorSystem actorSystem;
     private final ExecutionContext executionContext;
-    private ActionsEvent actionsSubscriber;
+    private BeverlyActionsEvent beverlyActionsEvent;
 
     @Inject
-    public BeverlySQS(Config config, ActorSystem actorSystem, ExecutionContext executionContext, ActionsEvent actionsSubscriber) {
+    public BeverlySQS(Config config, ActorSystem actorSystem, ExecutionContext executionContext, BeverlyActionsEvent actionsSubscriber) {
         System.out.println("BeberlySQS enabled.");
         this.queueUrl = config.getString("aws.queueUrl");
-        this.actionsSubscriber = actionsSubscriber;
+        this.beverlyActionsEvent = actionsSubscriber;
         this.actorSystem = actorSystem;
         this.executionContext = executionContext;
         sqsClient = SqsClient.builder()
@@ -73,8 +74,8 @@ public class BeverlySQS {
     }
 
     private void process(Message m) {
-        BeverlyMsg beverlyMsg = Json.fromJson(Json.parse(m.body()), BeverlyMsg.class);
-        actionsSubscriber.update(beverlyMsg.getEvent(), Json.parse(m.body()).get("msg").toString());
+        BeverlyEvent beverlyEvent = Json.fromJson(Json.parse(m.body()), BeverlyEvent.class);
+        beverlyActionsEvent.update(beverlyEvent.getMyClass(), Json.parse(m.body()).get("message").toString());
     }
 
     private void remove(Message m) {

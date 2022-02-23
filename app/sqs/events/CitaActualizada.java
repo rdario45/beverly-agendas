@@ -1,10 +1,11 @@
 package sqs.events;
 
-import acl.BeverlyMsg;
+import acl.types.BeverlyEvent;
 import domain.Cita;
 
-public class CitaActualizada extends BeverlyMsg {
+public class CitaActualizada extends BeverlyEvent {
+
     public CitaActualizada(Cita cita) {
-        super(cita, CitaActualizada.class.getSimpleName());
+        super(CitaActualizada.class.getSimpleName(), cita);
     }
 }

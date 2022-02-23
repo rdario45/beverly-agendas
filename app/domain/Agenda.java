@@ -1,6 +1,6 @@
 package domain;
 
-import acl.BeverlyAttrib;
+import acl.types.BeverlyAttrib;
 
 import java.util.List;
 

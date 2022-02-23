@@ -1,4 +1,4 @@
-package acl;
+package acl.types;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,6 +1,6 @@
 package sqs.actions;
 
-import acl.BeverlyAction;
+import acl.types.BeverlyAction;
 import domain.Agenda;
 import domain.Cita;
 import org.joda.time.DateTime;
@@ -30,10 +30,13 @@ public class DisminuirAgenda implements BeverlyAction {
         Optional<Agenda> agendaFound = agendasService.findFirstAgenda(cita.getAgenda(), Long.toString(fecha));
 
         if (agendaFound.isPresent()) {
+
             agendaFound.ifPresent(agenda -> {
+
                 agenda.setCitas(agenda.getCitas().stream()
                         .filter(compare -> !compare.getId().equals(cita.getId()))
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()));;
+
                 agendasService.update(agenda, agenda.getId());
             });
         }

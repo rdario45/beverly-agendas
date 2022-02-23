@@ -21,6 +21,9 @@ public class AgendasService {
         this.repository = repository;
     }
 
+    /*
+    * used by AgendasController
+    * */
     public Agenda save(Agenda agenda) {
         agenda.setId(UUID.randomUUID().toString());
         return repository.save(agenda);
@@ -31,10 +34,6 @@ public class AgendasService {
             agenda.setId(found.getId());
             return repository.save(agenda);
         });
-    }
-
-    public List<Agenda> findByFecha(String date) {
-        return repository.findByFecha(date);
     }
 
     public Optional<Agenda> findFirstAgenda(String agenda, String fecha) {

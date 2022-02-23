@@ -1,6 +1,6 @@
 package sqs.actions;
 
-import acl.BeverlyAction;
+import acl.types.BeverlyAction;
 import domain.Agenda;
 import domain.Cita;
 import org.joda.time.DateTime;
@@ -32,11 +32,17 @@ public class ActualizarAgenda implements BeverlyAction {
         Optional<Agenda> agendaFound = agendasService.findFirstAgenda(cita.getAgenda(), String.valueOf(fecha));
 
         if (agendaFound.isPresent()) {
+
             agendaFound.ifPresent(agenda -> {
+
                 Optional<Cita> any = agenda.getCitas().stream()
-                        .filter(x -> x.getId().equals(cita.getId())).findAny();
+                        .filter(x -> x.getId().equals(cita.getId()))
+                        .findAny();
+
                 if (any.isPresent()) {
-                    agenda.setCitas(agenda.getCitas().stream().map(x -> x.equals(cita) ? x.update(cita) : x).collect(Collectors.toList()));
+                    agenda.setCitas(agenda.getCitas().stream()
+                            .map(x -> x.equals(cita) ? x.update(cita) : x)
+                            .collect(Collectors.toList()));
                 } else {
                     agenda.getCitas().add(cita);
                 }

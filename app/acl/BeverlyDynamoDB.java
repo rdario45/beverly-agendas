@@ -1,8 +1,10 @@
 package acl;
 
+import acl.types.BeverlyAttrib;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.typesafe.config.Config;
+import org.apache.commons.beanutils.PropertyUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -11,17 +13,16 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
-public class BeverlyDB {
+public class BeverlyDynamoDB {
 
     private static DynamoDbClient ddb;
 
     @Inject
-    public BeverlyDB(Config config) {
+    public BeverlyDynamoDB(Config config) {
         System.out.println("BeverlyDB enabled!");
         this.ddb = DynamoDbClient.builder()
                 .region(Region.US_WEST_1)
@@ -33,19 +34,6 @@ public class BeverlyDB {
                                 )
                         )
                 ).build();
-    }
-
-    public static List<Map<String, AttributeValue>> getAll(String tableName) {
-        ScanRequest scanRequest = ScanRequest.builder().tableName(tableName).build();
-        ScanResponse scan = ddb.scan(scanRequest);
-        List<Map<String, AttributeValue>> items = null;
-        try {
-            items = scan.items();
-        } catch (Exception e) {
-            System.err.format("Unable to scan the table: %s", tableName);
-            System.err.println(e.getMessage());
-        }
-        return items;
     }
 
     public static Optional<Map<String, AttributeValue>> getItem(String tableName,
@@ -75,7 +63,9 @@ public class BeverlyDB {
     }
 
     public static <T> T putItem(String tableName, T record) {
+
         HashMap<String, AttributeValue> itemValues = getAttributeValueHashMapFromRecord(record);
+
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(itemValues)
@@ -91,39 +81,42 @@ public class BeverlyDB {
     }
 
     private static <T> HashMap<String, AttributeValue> getAttributeValueHashMapFromRecord(T record) {
+
         HashMap<String, AttributeValue> itemValues = new HashMap<>();
+
         Arrays.stream(record.getClass().getDeclaredFields())
                 .filter(field -> field.getAnnotation(BeverlyAttrib.class) != null)
                 .forEach(field -> itemValues.put(field.getName(), getAttributeValueFromRecord(record, field)));
+
         return itemValues;
+
     }
 
     private static <T> Collection<HashMap<String, AttributeValue>> getAttributeValueHashMapFromRecordList(Collection<T> records) {
-        return records.stream().map(BeverlyDB::getAttributeValueHashMapFromRecord).collect(Collectors.toList());
+        return records.stream().map(BeverlyDynamoDB::getAttributeValueHashMapFromRecord).collect(Collectors.toList());
     }
 
     private static <T> AttributeValue getAttributeValueFromRecord(T record, Field field) {
         AttributeValue attributeValue = null;
         try {
-            String methodName = buildMethodName(field.getName()); //TODO mejorar la dependencia creada.
-            Method method = record.getClass().getDeclaredMethod(methodName);
-            Object invoke = method.invoke(record);
-            String value = String.valueOf(invoke);
             String type = field.getAnnotation(BeverlyAttrib.class).type();
             switch (type) {
                 case "S":
-                    attributeValue = AttributeValue.builder().s(value).build();
+                    String valueS = (String) PropertyUtils.getNestedProperty(record, field.getName());
+                    attributeValue = AttributeValue.builder().s(valueS).build();
                     break;
                 case "N":
-                    attributeValue = AttributeValue.builder().n(value).build();
+                    String valueN = (String) PropertyUtils.getNestedProperty(record, field.getName());
+                    attributeValue = AttributeValue.builder().n(valueN).build();
                     break;
                 case "M":
-                    Map<String, AttributeValue> value2 = getAttributeValueHashMapFromRecord(invoke);
+                    String valueM = (String) PropertyUtils.getNestedProperty(record, field.getName());
+                    Map<String, AttributeValue> value2 = getAttributeValueHashMapFromRecord(valueM);
                     attributeValue = AttributeValue.builder().m(value2).build();
                     break;
                 case "L":
-                    List invoke1 = (List) method.invoke(record);
-                    Collection<HashMap<String, AttributeValue>> attributeValueHashMapFromRecordList = getAttributeValueHashMapFromRecordList(invoke1);
+                    List valueL = (List) PropertyUtils.getNestedProperty(record, field.getName());
+                    Collection<HashMap<String, AttributeValue>> attributeValueHashMapFromRecordList = getAttributeValueHashMapFromRecordList(valueL);
                     List<AttributeValue> collect = attributeValueHashMapFromRecordList.stream().map(stringAttributeValueHashMap -> AttributeValue.builder().m(stringAttributeValueHashMap).build()).collect(Collectors.toList());
                     attributeValue = AttributeValue.builder().l(collect).build();
                     break;
@@ -134,10 +127,6 @@ public class BeverlyDB {
         return attributeValue;
     }
 
-    private static String buildMethodName(String campo) {
-        return "get" + campo.substring(0, 1).toUpperCase() + campo.substring(1);
-    }
-
     public static List<Map<String, AttributeValue>> getAll(String tableName,
                                                            String filterExpression,
                                                            Map<String, AttributeValue> values) {
@@ -146,8 +135,11 @@ public class BeverlyDB {
                 .filterExpression(filterExpression)
                 .expressionAttributeValues(values)
                 .build();
+
         ScanResponse scan = ddb.scan(scanRequest);
+
         List<Map<String, AttributeValue>> items = null;
+
         try {
             items = scan.items();
         } catch (Exception e) {
@@ -165,15 +157,17 @@ public class BeverlyDB {
                 .filterExpression(filterExpression)
                 .expressionAttributeValues(values)
                 .build();
+
         ScanResponse scan = ddb.scan(scanRequest);
-        Optional<Map<String, AttributeValue>> items = null;
+
         try {
-            items = scan.items().stream().findFirst();
+            return scan.items().stream().findFirst();
         } catch (Exception e) {
             System.err.println("Unable to scan the table:");
             System.err.println(e.getMessage());
+            System.exit(-1);
         }
-        return items;
+        return Optional.empty();
     }
 
     public static void removeItem(String tableName, String key, String keyVal) {

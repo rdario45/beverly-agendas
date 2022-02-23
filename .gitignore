@@ -11,3 +11,5 @@ app/.DS_Store
 .DS_Store
 bin/app/
 bin/beverly-agenda-*
+# important!
+Dockerfile
