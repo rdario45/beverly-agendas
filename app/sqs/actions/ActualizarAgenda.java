@@ -41,7 +41,7 @@ public class ActualizarAgenda implements BeverlyAction {
 
                 if (any.isPresent()) {
                     agenda.setCitas(agenda.getCitas().stream()
-                            .map(x -> x.equals(cita) ? x.update(cita) : x)
+                            .map(x -> x.equals(cita) ? x.createNewCopy(cita) : x)
                             .collect(Collectors.toList()));
                 } else {
                     agenda.getCitas().add(cita);
