@@ -32,7 +32,6 @@ public class BeverlySQS {
 
     @Inject
     public BeverlySQS(Config config, ActorSystem actorSystem, ExecutionContext executionContext, BeverlyActionsEvent actionsSubscriber) {
-        System.out.println("BeberlySQS enabled.");
         this.queueUrl = config.getString("aws.queueUrl");
         this.beverlyActionsEvent = actionsSubscriber;
         this.actorSystem = actorSystem;
@@ -67,7 +66,6 @@ public class BeverlySQS {
                             for (Message message : messages) {
                                 process(message);
                                 remove(message);
-                                System.out.println("processed: " + message.body());
                             }
                         },
                         this.executionContext);

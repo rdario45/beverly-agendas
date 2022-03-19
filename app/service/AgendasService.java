@@ -30,7 +30,7 @@ public class AgendasService {
     }
 
     public Optional<Agenda> update(Agenda agenda, String id) {
-        return repository.find(id).map(found -> {
+        return repository.findFirst(id).map(found -> {
             agenda.setId(found.getId());
             return repository.save(agenda);
         });

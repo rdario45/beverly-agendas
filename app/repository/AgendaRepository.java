@@ -3,6 +3,7 @@ package repository;
 import acl.BeverlyDynamoDB;
 import domain.Agenda;
 import mapper.AgendaMapper;
+import org.joda.time.DateTime;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.HashMap;
@@ -12,8 +13,14 @@ import java.util.stream.Collectors;
 
 public class AgendaRepository {
 
-    public Optional<Agenda> find(String id) {
-        return BeverlyDynamoDB.getItem("agendas", "id", id)
+    public Optional<Agenda> findFirst(String id) {
+        long millisInit = new DateTime("2022-01-01T05:00:00.000-05:00").getMillis();
+        long millisEnd = new DateTime("2022-12-31T05:00:00.000-05:00").getMillis();
+        HashMap<String, AttributeValue> values = new HashMap<>();
+        values.put(":id", AttributeValue.builder().s(id).build());
+        values.put(":fechaInicial", AttributeValue.builder().n("" + millisInit).build());
+        values.put(":fechaFinal", AttributeValue.builder().n("" + millisEnd).build());
+        return BeverlyDynamoDB.getFirst("agendas", "id = :id AND fecha BETWEEN :fechaInicial AND :fechaFinal", values)
                 .map(valueMap -> new AgendaMapper().map(valueMap));
     }
 

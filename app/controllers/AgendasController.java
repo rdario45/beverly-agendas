@@ -32,7 +32,6 @@ public class AgendasController extends Controller {
         ).orElse(unauthorized());
     }
 
-
     private HashMap getAuthorizedResponse(BeverlyHttpAuthObject user, Object data) {
         HashMap response = new HashMap();
         response.put("data", data);

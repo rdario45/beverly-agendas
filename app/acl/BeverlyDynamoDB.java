@@ -23,7 +23,6 @@ public class BeverlyDynamoDB {
 
     @Inject
     public BeverlyDynamoDB(Config config) {
-        System.out.println("BeverlyDB enabled!");
         this.ddb = DynamoDbClient.builder()
                 .region(Region.US_WEST_1)
                 .credentialsProvider(
