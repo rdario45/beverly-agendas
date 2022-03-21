@@ -2,9 +2,9 @@ package service;
 
 import com.google.inject.Inject;
 import domain.Agenda;
-import domain.Cita;
 import domain.Servicio;
 import repository.AgendaRepository;
+import scala.Tuple2;
 
 import java.util.List;
 import java.util.Map;
@@ -22,8 +22,8 @@ public class AgendasService {
     }
 
     /*
-    * used by AgendasController
-    * */
+     * used by AgendasController
+     * */
     public Agenda save(Agenda agenda) {
         agenda.setId(UUID.randomUUID().toString());
         return repository.save(agenda);
@@ -40,23 +40,39 @@ public class AgendasService {
         return repository.findFirstAgendaByFecha(agenda, fecha);
     }
 
-    public List<Agenda>  findByRange(String startDate, String finalDate) {
+    public List<Agenda> findByRange(String startDate, String finalDate) {
         return repository.findByRange(startDate, finalDate);
     }
 
-    public Map<String, Long> getBalanceWeek(String startDate, String finalDate) {
+    public Map<String, Tuple2<Long, Long>> getBalancePieChart(String startDate, String finalDate) {
         List<Agenda> byRange = repository.findByRange(startDate, finalDate);
-        Map<String, List<Agenda>> map = byRange.stream().collect(Collectors.groupingBy(Agenda::getManicurista));
-        return map.entrySet()
+        return byRange.stream().collect(Collectors.groupingBy(Agenda::getManicurista)).entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> sumAgendas(e.getValue())));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> sumAgendasbyPorcentaje(e.getValue())));
     }
 
-    private Long sumAgendas(List<Agenda> agendas) {
-        return   agendas.stream().map(Agenda::getCitas).flatMap(List::stream).map(Cita::getServicios)
+    private Tuple2<Long, Long> sumAgendasbyPorcentaje(List<Agenda> agendas) {
+        List<Tuple2<Long, Long>> collect = agendas.stream()
+                .map(Agenda::getCitas)
                 .flatMap(List::stream)
-                .map(Servicio::getValor)
-                .map(Long::parseLong)
-                .reduce(0l, Long::sum);
+                .map(cita -> Tuple2.apply(cita.getPorcentaje(), cita.getServicios())).map(porcentajeServicios -> {
+                    List<Servicio> servicios = porcentajeServicios._2();
+                    Double porcentaje = Integer.parseInt(porcentajeServicios._1()) * 0.01;
+
+                    Long subtotal = servicios.stream()
+                            .map(Servicio::getValor)
+                            .map(Long::parseLong)
+                            .reduce(0l, Long::sum);
+
+                    return Tuple2.apply(
+                            (long) (subtotal * porcentaje),
+                            (long) (subtotal * (1 - porcentaje))
+                    );
+                }).collect(Collectors.toList());
+
+        Long left = collect.stream().map(Tuple2::_1).reduce(0l, Long::sum);
+        Long rigth = collect.stream().map(Tuple2::_2).reduce(0l, Long::sum);
+
+        return Tuple2.apply(left, rigth);
     }
 }

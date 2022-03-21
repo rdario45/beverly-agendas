@@ -66,6 +66,7 @@ public class BeverlySQS {
                             for (Message message : messages) {
                                 process(message);
                                 remove(message);
+                                System.out.println(message);
                             }
                         },
                         this.executionContext);
