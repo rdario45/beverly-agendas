@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 
 public class AgendaRepository {
 
+    public Agenda save(Agenda agenda) {
+        return BeverlyDynamoDB.putItem("agendas", agenda);
+    }
+
     public Optional<Agenda> findFirst(String id) {
         long millisInit = new DateTime("2022-01-01T05:00:00.000-05:00").getMillis();
         long millisEnd = new DateTime("2022-12-31T05:00:00.000-05:00").getMillis();
@@ -22,10 +26,6 @@ public class AgendaRepository {
         values.put(":fechaFinal", AttributeValue.builder().n("" + millisEnd).build());
         return BeverlyDynamoDB.getFirst("agendas", "id = :id AND fecha BETWEEN :fechaInicial AND :fechaFinal", values)
                 .map(valueMap -> new AgendaMapper().map(valueMap));
-    }
-
-    public Agenda save(Agenda agenda) {
-        return BeverlyDynamoDB.putItem("agendas", agenda);
     }
 
     public Optional<Agenda> findFirstAgendaByFecha(String agenda, String fecha) {

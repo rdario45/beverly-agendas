@@ -3,5 +3,6 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /agendas/:dateStart/:dateEnd                controllers.AgendasController.getWeeklyAgenda(dateStart: String, dateEnd: String, request: Request)
-GET     /agendas/balance/:dateStart/:dateEnd        controllers.AgendasController.getBalancePieChart(dateStart: String, dateEnd: String, request: Request)
+GET     /agendas/:dateStart/:dateEnd                    controllers.AgendasController.getWeeklyAgenda(dateStart: String, dateEnd: String, request: Request)
+GET     /agendas/balance/pie/:dateStart/:dateEnd        controllers.AgendasController.getBalancePieChart(dateStart: String, dateEnd: String, request: Request)
+GET     /agendas/balance/bar/:dateStart/:dateEnd        controllers.AgendasController.getBalanceBarChart(dateStart: String, dateEnd: String, request: Request)

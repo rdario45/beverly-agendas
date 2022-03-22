@@ -32,6 +32,12 @@ public class AgendasController extends Controller {
         ).orElse(unauthorized());
     }
 
+    public Result getBalanceBarChart(String startDate, String finalDate, Http.Request request) {
+        return request.attrs().getOptional(BeverlyHttpReqAttrib.USER).map(user ->
+                ok(Json.toJson(getAuthorizedResponse(user, agendasService.getBalanceBarChart(startDate, finalDate))))
+        ).orElse(unauthorized());
+    }
+
     private HashMap getAuthorizedResponse(BeverlyHttpAuthObject user, Object data) {
         HashMap response = new HashMap();
         response.put("data", data);
