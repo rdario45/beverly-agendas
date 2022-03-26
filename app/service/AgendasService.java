@@ -7,6 +7,7 @@ import domain.Servicio;
 import repository.AgendaRepository;
 import scala.Tuple2;
 
+import java.text.Normalizer;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
@@ -54,32 +55,44 @@ public class AgendasService {
 
     public Map<String, Long> getBalanceBarChart(String startDate, String finalDate) {
         Map<String, Integer> weekCount = Arrays.asList("LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO")
-                .stream().map(s -> new Tuple2<String, Integer>(s, 1))
+                .stream().map(s -> new Tuple2<>(s, 1))
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
+
         Map<String, Long> barChartData = new HashMap<>();
-        repository.findByRange(startDate, finalDate).stream().collect(Collectors.groupingBy(Agenda::getFecha))
+
+        repository.findByRange(startDate, finalDate)
+                .stream()
+                .collect(Collectors.groupingBy(Agenda::getFecha))
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> sumAgendas(e.getValue())))
                 .forEach((key, subtotal) -> {
-                    String displayName = Instant.ofEpochSecond(Long.parseLong(key))
-                            .atZone(ZoneId.of("America/Montreal"))
-                            .getDayOfWeek()
-                            .getDisplayName(TextStyle.FULL, new Locale("es", "ES")).toUpperCase();
 
-                    if (barChartData.containsKey(displayName)) {
-                        barChartData.put(displayName, (barChartData.get(displayName) + subtotal) / weekCount.get(displayName));
+                    String displayName = Instant.ofEpochMilli(Long.parseLong(key))
+                            .atZone(ZoneId.of("America/Bogota"))
+                            .getDayOfWeek()
+                            .getDisplayName(TextStyle.FULL, new Locale("es", "CO")).toUpperCase();
+
+                    String displayWeekName = Normalizer
+                            .normalize(displayName, Normalizer.Form.NFD)
+                            .replaceAll("[^\\p{ASCII}]", "");
+
+                    if (barChartData.containsKey(displayWeekName)) {
+                        barChartData.put(displayWeekName, (barChartData.get(displayWeekName) + subtotal) / weekCount.get(displayWeekName));
                     } else {
-                        barChartData.put(displayName, subtotal / weekCount.get(displayName));
+                        barChartData.put(displayWeekName, subtotal / weekCount.get(displayWeekName));
                     }
-                    weekCount.put(displayName, weekCount.get(displayName) + 1);
+                    weekCount.put(displayWeekName, weekCount.get(displayWeekName) + 1);
                 });
+
         return barChartData;
     }
 
-
     private Long sumAgendas(List<Agenda> agendas) {
-        return agendas.stream().map(Agenda::getCitas).flatMap(List::stream).map(Cita::getServicios)
+        return agendas.stream()
+                .map(Agenda::getCitas)
+                .flatMap(List::stream)
+                .map(Cita::getServicios)
                 .flatMap(List::stream)
                 .map(Servicio::getValor)
                 .map(Long::parseLong)
