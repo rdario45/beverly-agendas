@@ -54,10 +54,6 @@ public class AgendasService {
     }
 
     public Map<String, Long> getBalanceBarChart(String startDate, String finalDate) {
-        Map<String, Integer> weekCount = Arrays.asList("LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO")
-                .stream().map(s -> new Tuple2<>(s, 1))
-                .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
-
         Map<String, Long> barChartData = new HashMap<>();
 
         repository.findByRange(startDate, finalDate)
@@ -78,11 +74,11 @@ public class AgendasService {
                             .replaceAll("[^\\p{ASCII}]", "");
 
                     if (barChartData.containsKey(displayWeekName)) {
-                        barChartData.put(displayWeekName, (barChartData.get(displayWeekName) + subtotal) / weekCount.get(displayWeekName));
+                        barChartData.put(displayWeekName, (barChartData.get(displayWeekName) + subtotal));
+
                     } else {
-                        barChartData.put(displayWeekName, subtotal / weekCount.get(displayWeekName));
+                        barChartData.put(displayWeekName, subtotal);
                     }
-                    weekCount.put(displayWeekName, weekCount.get(displayWeekName) + 1);
                 });
 
         return barChartData;
