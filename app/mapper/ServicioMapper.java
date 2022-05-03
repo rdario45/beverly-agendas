@@ -13,8 +13,8 @@ public class ServicioMapper implements BeverlyDynamoMapper<Servicio> {
 
     public Servicio map(Map<String, AttributeValue> map) {
         return new Servicio(
-                Optional.ofNullable(map.get("nombre")).map(AttributeValue::s).orElse("undefined"),
-                Optional.ofNullable(map.get("valor")).map(AttributeValue::n).orElse("0")
+                Optional.ofNullable(map.get("nombre")).map(AttributeValue::s).get(),
+                Optional.ofNullable(map.get("valor")).map(AttributeValue::n).get()
         );
     }
 

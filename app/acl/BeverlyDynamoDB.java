@@ -168,19 +168,4 @@ public class BeverlyDynamoDB {
         }
         return Optional.empty();
     }
-
-    public static void removeItem(String tableName, String key, String keyVal) {
-        try {
-            Map<String, AttributeValue> keyMap = new HashMap<>();
-            keyMap.put(key, AttributeValue.builder().s(keyVal).build());
-
-            DeleteItemRequest dir = DeleteItemRequest.builder()
-                    .tableName(tableName)
-                    .key(keyMap)
-                    .build();
-            ddb.deleteItem(dir);
-        } catch (DynamoDbException e) {
-            System.err.format("%s %s " + e.getMessage(), tableName, key);
-        }
-    }
 }

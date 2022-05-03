@@ -22,7 +22,6 @@ public class BeverlyActionsEvent {
     @Inject
     public BeverlyActionsEvent(ActualizarAgenda actualizarAgenda,
                                DisminuirAgenda disminuirAgenda) {
-
         actions.put(CitaCreada.class.getSimpleName(), Arrays.asList(actualizarAgenda));
         actions.put(CitaActualizada.class.getSimpleName(), Arrays.asList(actualizarAgenda));
         actions.put(CitaEliminada.class.getSimpleName(), Arrays.asList(disminuirAgenda));
