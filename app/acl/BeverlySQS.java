@@ -65,6 +65,7 @@ public class BeverlySQS {
 
                             for (Message message : messages) {
                                 process(message);
+                                System.out.printf("processed: %s \n", Json.toJson(message).toString());
                                 remove(message);
                             }
                         },

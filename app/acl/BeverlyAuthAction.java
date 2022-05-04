@@ -17,6 +17,7 @@ public class BeverlyAuthAction extends Action.Simple {
     static final int EIGHT_HOURS_IN_MILLIS = 28800000;
 
     public CompletionStage<Result> call(Http.Request req) {
+//        System.out.println(req.toString());
         return req.queryString("access_token")
                 .flatMap(accessToken -> getSessionItem(accessToken)
                         .flatMap(beverlyHttpAuthObject -> {

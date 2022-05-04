@@ -29,13 +29,13 @@ public class AgendasController extends Controller {
         ).orElse(unauthorized());
     }
 
-    public Result getBalancePieChart(String startDate, String finalDate, Http.Request request) {
+    public Result getChartPie(String startDate, String finalDate, Http.Request request) {
         return request.attrs().getOptional(BeverlyHttpReqAttrib.USER).map(user ->
                 ok(Json.toJson(getAuthorizedResponse(user, agendasService.getBalancePieChart(startDate, finalDate))))
         ).orElse(unauthorized());
     }
 
-    public Result getBalanceBarChart(String startDate, String finalDate, Http.Request request) {
+    public Result getChartBar(String startDate, String finalDate, Http.Request request) {
         return request.attrs().getOptional(BeverlyHttpReqAttrib.USER).map(user ->
                 ok(Json.toJson(getAuthorizedResponse(user, agendasService.getBalanceBarChart(startDate, finalDate))))
         ).orElse(unauthorized());
