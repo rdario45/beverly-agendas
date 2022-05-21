@@ -2,7 +2,9 @@ package repository;
 
 import acl.BeverlyDynamoDB;
 import domain.Agenda;
+import domain.Cita;
 import mapper.AgendaMapper;
+import mapper.CitaMapper;
 import org.joda.time.DateTime;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
@@ -18,8 +20,10 @@ public class AgendaRepository {
     }
 
     public Optional<Agenda> findFirst(String id) {
+
         long millisInit = new DateTime("2022-01-01T05:00:00.000-05:00").getMillis();
         long millisEnd = new DateTime("2022-12-31T05:00:00.000-05:00").getMillis();
+
         HashMap<String, AttributeValue> values = new HashMap<>();
         values.put(":id", AttributeValue.builder().s(id).build());
         values.put(":fechaInicial", AttributeValue.builder().n("" + millisInit).build());
@@ -42,6 +46,14 @@ public class AgendaRepository {
         values.put(":fechaFinal", AttributeValue.builder().n(finalDate).build());
         return BeverlyDynamoDB.getAll("agendas", "fecha BETWEEN :fechaInicial and :fechaFinal", values)
                 .stream().map(valueMap -> new AgendaMapper().map(valueMap))
+                .collect(Collectors.toList());
+    }
+
+    public List<Cita> getAll() {
+        HashMap<String, AttributeValue> values = new HashMap<>();
+        values.put(":now", AttributeValue.builder().n("" + new DateTime().getMillis()).build());
+        return BeverlyDynamoDB.getAll("agendas", "fecha < :now", values)
+                .stream().map(valueMap -> new CitaMapper().map(valueMap))
                 .collect(Collectors.toList());
     }
 }

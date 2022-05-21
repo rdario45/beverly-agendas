@@ -6,3 +6,5 @@
 GET     /agendas/:dateStart/:dateEnd                    controllers.AgendasController.getWeeklyAgenda(dateStart: String, dateEnd: String, request: Request)
 GET     /agendas/charts/pie/:dateStart/:dateEnd         controllers.AgendasController.getChartPie(dateStart: String, dateEnd: String, request: Request)
 GET     /agendas/charts/bar/:dateStart/:dateEnd         controllers.AgendasController.getChartBar(dateStart: String, dateEnd: String, request: Request)
+GET     /agendas/how-many                               controllers.AgendasController.howMany(request: Request)
+GET     /agendas/how-much                               controllers.AgendasController.howMuch(request: Request)

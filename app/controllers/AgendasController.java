@@ -41,6 +41,21 @@ public class AgendasController extends Controller {
         ).orElse(unauthorized());
     }
 
+    public Result howMany(Http.Request request) {
+        return request.attrs().getOptional(BeverlyHttpReqAttrib.USER).map(user ->
+                        agendasService.findHowMany().map(data ->
+                                ok(Json.toJson(getAuthorizedResponse(user, data)))
+                        ).orElse(notFound()))
+                .orElse(unauthorized());
+    }
+
+    public Result howMuch(Http.Request request) {
+        return request.attrs().getOptional(BeverlyHttpReqAttrib.USER).map(user ->
+                        agendasService.findHowMuch().map(data ->
+                                ok(Json.toJson(getAuthorizedResponse(user, data)))
+                        ).orElse(notFound()))
+                .orElse(unauthorized());
+    }
     private HashMap getAuthorizedResponse(BeverlyHttpAuthObject user, Object data) {
         HashMap response = new HashMap();
         response.put("data", data);

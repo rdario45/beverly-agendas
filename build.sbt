@@ -1,6 +1,6 @@
 name := """beverly-agendas"""
 organization := "com.beverly-spa"
-version := "1.0-SNAPSHOT"
+version := "1.1-SNAPSHOT"
 scalaVersion := "2.13.6"
 libraryDependencies += guice
 libraryDependencies += "commons-beanutils" % "commons-beanutils" % "1.9.3"

@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AgendasService {
 
@@ -115,5 +116,23 @@ public class AgendasService {
         Long left = collect.stream().map(Tuple2::_1).reduce(0l, Long::sum);
         Long rigth = collect.stream().map(Tuple2::_2).reduce(0l, Long::sum);
         return Tuple2.apply(left, rigth);
+    }
+
+    public Optional<Integer> findHowMany() {
+        List<Cita> all = repository.getAll();
+
+        return Optional.of(all.size());
+    }
+
+    public Optional<Long> findHowMuch() {
+        Stream<Cita> allStream = repository.getAll().stream();
+
+        Stream<Servicio> servicesStream = allStream.flatMap(cita1 -> cita1.getServicios().stream());
+
+        Stream<Long> longStream = servicesStream.map(Servicio::getValor).map(Long::valueOf);
+
+        Long reduce = longStream.reduce(0l, Long::sum);
+
+        return Optional.of(reduce);
     }
 }
